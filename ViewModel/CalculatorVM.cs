@@ -24,6 +24,8 @@ namespace CalculatorApp.ViewModel
 			}
 		}
 
+		// add some new code
+
 		private double number1;
 
 		public double Number1

@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace CalculatorApp.ViewModel.Commands
 {
-    public class NumberButtonCommand : ICommand
+    public class DecimalButtonCommand : ICommand
     {
         public CalculatorVM VM { get; set; }
 
@@ -17,7 +17,7 @@ namespace CalculatorApp.ViewModel.Commands
             remove { CommandManager.RequerySuggested -= value; }
         }
 
-        public NumberButtonCommand(CalculatorVM vm)
+        public DecimalButtonCommand(CalculatorVM vm)
         {
             VM = vm;
         }
@@ -29,7 +29,7 @@ namespace CalculatorApp.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            VM.NumberButtonClick(parameter);
+            VM.DecimalButtonClick();
         }
     }
 }

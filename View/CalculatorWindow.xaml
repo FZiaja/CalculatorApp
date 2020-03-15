@@ -131,6 +131,7 @@
                 Grid.ColumnSpan="2"
                 Style="{StaticResource numberButtonStyle}"/>
         <Button Content="."
+                Command="{Binding DecimalButtonCommand}"
                 Grid.Row="5"
                 Grid.Column="2"
                 Style="{StaticResource numberButtonStyle}"/>

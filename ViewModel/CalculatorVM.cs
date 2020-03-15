@@ -42,11 +42,24 @@ namespace CalculatorApp.ViewModel
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		public ACButtonCommand ACButtonCommand { get; set; }
+		public DecimalButtonCommand DecimalButtonCommand { get; set; }
+		public EqualsButtonCommand EqualsButtonCommand { get; set; }
+		public NegativeButtonCommand NegativeButtonCommand { get; set; }
 		public NumberButtonCommand NumberButtonCommand { get; set; }
+		public OperatorButtonCommand OperatorButtonCommand { get; set; }
+		public PercentButtonCommand PercentButtonCommand { get; set; }
 
 		public CalculatorVM()
 		{
+			ACButtonCommand = new ACButtonCommand(this);
+			DecimalButtonCommand = new DecimalButtonCommand(this);
+			EqualsButtonCommand = new EqualsButtonCommand(this);
+			NegativeButtonCommand = new NegativeButtonCommand(this);
 			NumberButtonCommand = new NumberButtonCommand(this);
+			OperatorButtonCommand = new OperatorButtonCommand(this);
+			PercentButtonCommand = new PercentButtonCommand(this);
+
 			DisplayString = "0";
 		}
 
@@ -69,7 +82,10 @@ namespace CalculatorApp.ViewModel
 
 		public void DecimalButtonClick()
 		{
-
+			if (!DisplayString.Contains("."))
+			{
+				DisplayString = $"{DisplayString}.";
+			}
 		}
 
 		public void ACButtonClick()

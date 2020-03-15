@@ -56,7 +56,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ViewModel\CalculatorVM.cs" />
+    <Compile Include="ViewModel\Commands\ACButtonCommand.cs" />
+    <Compile Include="ViewModel\Commands\DecimalButtonCommand.cs" />
+    <Compile Include="ViewModel\Commands\EqualsButtonCommand.cs" />
+    <Compile Include="ViewModel\Commands\NegativeButtonCommand.cs" />
     <Compile Include="ViewModel\Commands\NumberButtonCommand.cs" />
+    <Compile Include="ViewModel\Commands\OperatorButtonCommand.cs" />
+    <Compile Include="ViewModel\Commands\PercentButtonCommand.cs" />
     <Compile Include="View\CalculatorWindow.xaml.cs">
       <DependentUpon>CalculatorWindow.xaml</DependentUpon>
     </Compile>
@@ -95,6 +101,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ViewModel\Helpers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="READ_ME.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

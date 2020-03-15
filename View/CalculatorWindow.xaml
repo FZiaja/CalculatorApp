@@ -1,0 +1,142 @@
+﻿<Window x:Class="CalculatorApp.View.CalculatorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CalculatorApp.View"
+        xmlns:vm="clr-namespace:CalculatorApp.ViewModel"
+        mc:Ignorable="d"
+        Title="CalculatorWindow" Height="600" Width="400" ResizeMode="NoResize">
+    <Window.Resources>
+        <vm:CalculatorVM x:Key="vm"/>
+    </Window.Resources>
+    <Grid DataContext="{StaticResource vm}"
+          Background="Black">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <Label Content="{Binding DisplayString, UpdateSourceTrigger=PropertyChanged}"
+               Grid.Row="0"
+               Grid.Column="0"
+               Grid.ColumnSpan="4"
+               Margin="5"
+               Foreground="White"
+               HorizontalContentAlignment="Right"
+               VerticalContentAlignment="Bottom"
+               FontSize="50"/>
+
+        <Button Content="AC"
+                Grid.Row="1"
+                Grid.Column="0"
+                Style="{StaticResource miscButtonStyle}"/>
+        <Button Content="+/-"
+                Grid.Row="1"
+                Grid.Column="1"
+                Style="{StaticResource miscButtonStyle}"/>
+        <Button Content="%"
+                Grid.Row="1"
+                Grid.Column="2"
+                Style="{StaticResource miscButtonStyle}"/>
+        <Button Content="/"
+                Grid.Row="1"
+                Grid.Column="3"
+                Style="{StaticResource operatorButtonStyle}"/>
+
+        <Button Content="7"
+                Command="{Binding NumberButtonCommand}"
+                CommandParameter="7"
+                Grid.Row="2"
+                Grid.Column="0"
+                Style="{StaticResource numberButtonStyle}"/>
+        <Button Content="8"
+                Command="{Binding NumberButtonCommand}"
+                CommandParameter="8"
+                Grid.Row="2"
+                Grid.Column="1"
+                Style="{StaticResource numberButtonStyle}"/>
+        <Button Content="9"
+                Command="{Binding NumberButtonCommand}"
+                CommandParameter="9"
+                Grid.Row="2"
+                Grid.Column="2"
+                Style="{StaticResource numberButtonStyle}"/>
+        <Button Content="*"
+                Grid.Row="2"
+                Grid.Column="3"
+                Style="{StaticResource operatorButtonStyle}"/>
+
+        <Button Content="4"
+                Command="{Binding NumberButtonCommand}"
+                CommandParameter="4"
+                Grid.Row="3"
+                Grid.Column="0"
+                Style="{StaticResource numberButtonStyle}"/>
+        <Button Content="5"
+                Command="{Binding NumberButtonCommand}"
+                CommandParameter="5"
+                Grid.Row="3"
+                Grid.Column="1"
+                Style="{StaticResource numberButtonStyle}"/>
+        <Button Content="6"
+                Command="{Binding NumberButtonCommand}"
+                CommandParameter="6"
+                Grid.Row="3"
+                Grid.Column="2"
+                Style="{StaticResource numberButtonStyle}"/>
+        <Button Content="-"
+                Grid.Row="3"
+                Grid.Column="3"
+                Style="{StaticResource operatorButtonStyle}"/>
+
+        <Button Content="1"
+                Command="{Binding NumberButtonCommand}"
+                CommandParameter="1"
+                Grid.Row="4"
+                Grid.Column="0"
+                Style="{StaticResource numberButtonStyle}"/>
+        <Button Content="2"
+                Command="{Binding NumberButtonCommand}"
+                CommandParameter="2"
+                Grid.Row="4"
+                Grid.Column="1"
+                Style="{StaticResource numberButtonStyle}"/>
+        <Button Content="3"
+                Command="{Binding NumberButtonCommand}"
+                CommandParameter="3"
+                Grid.Row="4"
+                Grid.Column="2"
+                Style="{StaticResource numberButtonStyle}"/>
+        <Button Content="+"
+                Grid.Row="4"
+                Grid.Column="3"
+                Style="{StaticResource operatorButtonStyle}"/>
+
+        <Button Content="0"
+                Command="{Binding NumberButtonCommand}"
+                CommandParameter="0"
+                Grid.Row="5"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Style="{StaticResource numberButtonStyle}"/>
+        <Button Content="."
+                Grid.Row="5"
+                Grid.Column="2"
+                Style="{StaticResource numberButtonStyle}"/>
+        <Button Content="="
+                Grid.Row="5"
+                Grid.Column="3"
+                Style="{StaticResource operatorButtonStyle}"/>
+    </Grid>
+</Window>

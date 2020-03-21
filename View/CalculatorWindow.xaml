@@ -38,18 +38,23 @@
                FontSize="50"/>
 
         <Button Content="AC"
+                Command="{Binding ACButtonCommand}"
                 Grid.Row="1"
                 Grid.Column="0"
                 Style="{StaticResource miscButtonStyle}"/>
         <Button Content="+/-"
+                Command="{Binding NegativeButtonCommand}"
                 Grid.Row="1"
                 Grid.Column="1"
                 Style="{StaticResource miscButtonStyle}"/>
         <Button Content="%"
+                Command="{Binding PercentButtonCommand}"
                 Grid.Row="1"
                 Grid.Column="2"
                 Style="{StaticResource miscButtonStyle}"/>
         <Button Content="/"
+                Command="{Binding OperatorButtonCommand}"
+                CommandParameter="/"
                 Grid.Row="1"
                 Grid.Column="3"
                 Style="{StaticResource operatorButtonStyle}"/>
@@ -73,6 +78,8 @@
                 Grid.Column="2"
                 Style="{StaticResource numberButtonStyle}"/>
         <Button Content="*"
+                Command="{Binding OperatorButtonCommand}"
+                CommandParameter="*"
                 Grid.Row="2"
                 Grid.Column="3"
                 Style="{StaticResource operatorButtonStyle}"/>
@@ -96,6 +103,8 @@
                 Grid.Column="2"
                 Style="{StaticResource numberButtonStyle}"/>
         <Button Content="-"
+                Command="{Binding OperatorButtonCommand}"
+                CommandParameter="-"
                 Grid.Row="3"
                 Grid.Column="3"
                 Style="{StaticResource operatorButtonStyle}"/>
@@ -119,6 +128,8 @@
                 Grid.Column="2"
                 Style="{StaticResource numberButtonStyle}"/>
         <Button Content="+"
+                Command="{Binding OperatorButtonCommand}"
+                CommandParameter="+"
                 Grid.Row="4"
                 Grid.Column="3"
                 Style="{StaticResource operatorButtonStyle}"/>
@@ -136,6 +147,7 @@
                 Grid.Column="2"
                 Style="{StaticResource numberButtonStyle}"/>
         <Button Content="="
+                Command="{Binding EqualsButtonCommand}"
                 Grid.Row="5"
                 Grid.Column="3"
                 Style="{StaticResource operatorButtonStyle}"/>

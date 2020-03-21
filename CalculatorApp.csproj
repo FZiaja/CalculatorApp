@@ -63,6 +63,7 @@
     <Compile Include="ViewModel\Commands\NumberButtonCommand.cs" />
     <Compile Include="ViewModel\Commands\OperatorButtonCommand.cs" />
     <Compile Include="ViewModel\Commands\PercentButtonCommand.cs" />
+    <Compile Include="ViewModel\Helpers\BasicMath.cs" />
     <Compile Include="View\CalculatorWindow.xaml.cs">
       <DependentUpon>CalculatorWindow.xaml</DependentUpon>
     </Compile>
@@ -101,9 +102,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModel\Helpers\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="READ_ME.txt" />
   </ItemGroup>

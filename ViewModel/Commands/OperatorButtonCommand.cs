@@ -29,7 +29,7 @@ namespace CalculatorApp.ViewModel.Commands
 
         public void Execute(object parameter)
         {
-            VM.OperatorButtonClick();
+            VM.OperatorButtonClick(parameter);
         }
     }
 }

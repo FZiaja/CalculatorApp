@@ -7,6 +7,9 @@ using System.Windows.Input;
 
 namespace CalculatorApp.ViewModel.Commands
 {
+    /// <summary>
+    /// Command class to implement the "Equals" button command.
+    /// </summary>
     public class EqualsButtonCommand : ICommand
     {
         public CalculatorVM VM { get; set; }

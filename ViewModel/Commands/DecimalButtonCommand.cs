@@ -7,6 +7,9 @@ using System.Windows.Input;
 
 namespace CalculatorApp.ViewModel.Commands
 {
+    /// <summary>
+    /// Command class to implement the "Decimal" button command.
+    /// </summary>
     public class DecimalButtonCommand : ICommand
     {
         public CalculatorVM VM { get; set; }

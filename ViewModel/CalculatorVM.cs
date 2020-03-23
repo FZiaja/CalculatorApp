@@ -11,40 +11,24 @@ using System.Windows.Controls;
 
 namespace CalculatorApp.ViewModel
 {
-	/* Only the operation buttons can change the index from 0 to 1.
-	 AC button - resets the application
-	 +/- button - if number at current index is 0, then sets display to 0. Otherwise, negates this number and updates the display.
-	 % button k- if index is 0, then divides operands[0] by 100, stores the result back into operands[0]. 
-				If index is 1, then calculates multiplies operands[0] by (operands[1]/100) and stores result in operands[1]
-	 Operation buttons - Set selected operation. If index is 0, set the index to 1. 
-						If index is 1 and the last button pressed was NOT an operation button, then calculate expression and store in operands[0].
-	 = button - Evaluate expression and store in operands[0]*/
 	public class CalculatorVM : INotifyPropertyChanged
     {
-		private string displayString;
+        #region Private Members
+        private string displayString;
 
-		public string DisplayString
-		{
-			get 
-			{
-				//return operands[index].ToString();
-				return displayString; 
-			}
-			set 
-			{ 
-				displayString = value;
-				OnPropertyChanged("DisplayString");
-			}
-		}
+		private double result;							// Holds the final and intermediate computed results.
+		private Operator selectedOperator;				// Holds the currently selected operator, from the most recently presses operation button.
+		private ErrorState errorState;                  // Indicates whether the calculator is in an error state (eg. after dividing by 0).
 
-		private double[] operands;
-		private int index;
-		private Operator selectedOperator;
-		private bool errorState;
-		private bool operationPressedLast;
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		// In this application, dependency button is any button that can affect the behavior of another button later in the computation.
+		private ButtonType lastDepButtonPressed;        // Indicates the type of the last dependency button pressed (see ButtonType enum below). 
+														// This variable is updated for all button presses.
+		private ButtonType lastDepButtonPressed2;       // Indicates the type of the last dependency button pressed (see ButtonType enum below).
+														// This variable is updated only for presses of the "AC", "Percent", operator, and "Equals" buttons.
+		#endregion
 
+		#region Commands
 		public ACButtonCommand ACButtonCommand { get; set; }
 		public DecimalButtonCommand DecimalButtonCommand { get; set; }
 		public EqualsButtonCommand EqualsButtonCommand { get; set; }
@@ -52,13 +36,17 @@ namespace CalculatorApp.ViewModel
 		public NumberButtonCommand NumberButtonCommand { get; set; }
 		public OperatorButtonCommand OperatorButtonCommand { get; set; }
 		public PercentButtonCommand PercentButtonCommand { get; set; }
-
+		#endregion
+		 
+		/// <summary>
+		/// CalculatorVM Constructor
+		/// </summary>
 		public CalculatorVM()
 		{
-			operands = new double[2];
-
+			// Reset the calculator to its initial state.
 			ACButtonClick();
 
+			// Assign commands.
 			ACButtonCommand = new ACButtonCommand(this);
 			DecimalButtonCommand = new DecimalButtonCommand(this);
 			EqualsButtonCommand = new EqualsButtonCommand(this);
@@ -68,93 +56,187 @@ namespace CalculatorApp.ViewModel
 			PercentButtonCommand = new PercentButtonCommand(this);
 		}
 
-		public void NumberButtonClick(object parameter)
-		{
-			//MessageBox.Show(parameter.ToString());
-			//MessageBox.Show("---" + DisplayString + "---");
 
+		/// <summary>
+		/// Display string bound to the calculator label.
+		/// </summary>
+		public string DisplayString
+		{
+			get
+			{
+				return displayString;
+			}
+			set
+			{
+				displayString = value;
+				OnPropertyChanged("DisplayString");
+			}
+		}
+
+        #region Button Command Implementations
+        public void NumberButtonClick(object parameter)
+		{
+			/* Method invoked when a numeric button is pressed. */
+
+			// If the last button pressed was "Equals" or "Percent", or if the calculator is in an error state, then reset the calculator to its initial state.
+			if (lastDepButtonPressed2 == ButtonType.Equals || lastDepButtonPressed2 == ButtonType.Percent || errorState != ErrorState.None)
+			{
+				ACButtonClick();
+			}
+
+			// Get the digit that was pressed
 			string number = parameter as string;
 
-			if (DisplayString == "0" || operationPressedLast)
+			// If the display reads "0" or the last button pressed was an operator button, then reset the display and begin writing a new number.
+			if (DisplayString == "0" || lastDepButtonPressed == ButtonType.Operator)
 			{
 				DisplayString = number;
 			}
+			// Otherwise append the new digit to the current number.
 			else
 			{
 				DisplayString = DisplayString + number;
 			}
 
-			operationPressedLast = false;
-
-			//MessageBox.Show("---" + DisplayString + "---");
+			// Update last button pressed.
+			lastDepButtonPressed = ButtonType.Number;
 		}
 
 		public void DecimalButtonClick()
 		{
-			if (operationPressedLast)
+			/* Method invoked when the decimal button is pressed. */
+
+			// If the last button pressed was "Equals" or "Percent", or if the calculator is in an error state, then reset the calculator to its initial state.
+			if (lastDepButtonPressed2 == ButtonType.Equals || lastDepButtonPressed2 == ButtonType.Percent  || errorState != ErrorState.None)
+			{
+				ACButtonClick();
+			}
+
+			// If the last button pressed was an operator button, then reset the display and begin writing a new number.
+			if (lastDepButtonPressed2 == ButtonType.Operator)
 			{
 				DisplayString = $"0.";
 			}
+			// Otherwise append a decimal point, unless the current number already has one.
 			else if (!DisplayString.Contains("."))
 			{
 				DisplayString = $"{DisplayString}.";
 			}
 
-			operationPressedLast = false;
+			// Update last button pressed.
+			lastDepButtonPressed = ButtonType.Decimal;
 		}
 
 		public void ACButtonClick()
 		{
+			/* Method invoked in class construction and when the "AC" button is pressed.
+			 * Resets the calculator to its initial state. */
+
 			DisplayString = "0";
-			operands[0] = operands[1] = 0.0;
-			index = 0;
+			result = 0.0;
 			selectedOperator = Operator.Undefined;
-			errorState = false;
-			operationPressedLast = false;
+			errorState = ErrorState.None;
+			lastDepButtonPressed = ButtonType.AC;
+			lastDepButtonPressed2 = ButtonType.AC;
 		}
 
 		public void NegativeButtonClick()
 		{
+			/* Method invoked when the "+/-" button is pressed. */
+
+			// If the calculator is in an error state, then reset to its initial state.
+			if (errorState != ErrorState.None)
+			{
+				ACButtonClick();
+			}
+
+			// Variable to store the number currently being displayed.
 			double number;
 
-			if (!operationPressedLast && double.TryParse(DisplayString, out number))
+			// If the last button pressed was and operator, then don't do anything. Otherwise, parse the number on the display and store in the "number" variable.
+			if (lastDepButtonPressed != ButtonType.Operator && double.TryParse(DisplayString, out number))
 			{
+				// Negate the number and display the result.
 				number *= -1;
 				DisplayString = number.ToString();
+
+				// If the last button pressed was "Equals", then negate the number stored in "result", since we want to negate the result computed so far.
+				// Otherwise, we only want to negate the number on the display, without affecting the result.
+				if (lastDepButtonPressed2 == ButtonType.Equals)
+				{
+					result *= -1;
+				}
+
+				// Update last button pressed.
+				lastDepButtonPressed = ButtonType.Negative;
 			}
 		}
 
 		public void PercentButtonClick()
 		{
+			/* Method invoked when the "Percent" button is pressed. */
+
+			// If the calculator is in an error state, then reset to its initial state.
+			if (errorState != ErrorState.None)
+			{
+				ACButtonClick();
+			}
+
+			// Variable to store the number currently being displayed.
 			double number;
 
-			if (!operationPressedLast && double.TryParse(DisplayString, out number))
+			// Parse the number on the display and store in the "number" variable.
+			if (double.TryParse(DisplayString, out number))
 			{
-				if (index == 0)
+				// If the currently selected operator is addition or subtraction, then take the number stored in "result" and multiply it by the current number, and divide by 100.
+				if (selectedOperator == Operator.Addition || selectedOperator == Operator.Subtraction)
+				{
+					number = result * number / 100;
+				}
+				else
+				// Otherwise divide the current number by 100.
 				{
 					number /= 100;
 				}
-				else
-				{
-					number = operands[0] * number / 100;
-				}
 
+				// Display the result.
 				DisplayString = number.ToString();
 			}
+
+			// Update last button pressed and last dependency button pressed.
+			lastDepButtonPressed = ButtonType.Percent;
+			lastDepButtonPressed2 = ButtonType.Percent;
 		}
 
 		public void OperatorButtonClick(object parameter)
 		{
-			if (index == 1 && selectedOperator != Operator.Undefined)
-			{
-				EqualsButtonClick();
-			}
+			/* Method invoked when an operator button is pressed. */
 
-
-			if (!errorState)
+			// If the calculator is in an error state, don't do anything.
+			if (errorState == ErrorState.None) 
 			{
+				// The current number is the first number in the current computation (ie. the selected operator is undefined), then store the number in "result.
+				if (selectedOperator == Operator.Undefined)
+				{
+					double number;
+
+					if (double.TryParse(DisplayString, out number))
+					{
+						result = number;
+					}
+				}
+				// Otherwise, an operator has already been selected. If this previous operator was followed by a number (that is, the last button pressed was not "Equals" or another operator),
+				// then click the "Equals" button to compute an intermediate result.
+				// Otherwise, if the last button pressed was another operator, then the user likely pressed the previous operator in error, so we update the operator without making a computation.
+				else if (selectedOperator != Operator.Undefined && lastDepButtonPressed != ButtonType.Operator)
+				{
+					EqualsButtonClick();
+				}
+
+				// Get the parameter as a string.
 				string op = parameter as string;
 
+				// Set the selected operator.
 				switch (op)
 				{
 					case "+":
@@ -170,58 +252,90 @@ namespace CalculatorApp.ViewModel
 						selectedOperator = Operator.Division;
 						break;
 				}
-
-				double number;
-
-				if (double.TryParse(DisplayString, out number))
-				{
-					operands[index] = number;
-				}
-
-				operationPressedLast = true;
-				index = 1;
 			}
+
+			// Update last button pressed and last dependency button pressed.
+			lastDepButtonPressed = ButtonType.Operator;
+			lastDepButtonPressed2 = ButtonType.Operator;
 		}
 
 		public void EqualsButtonClick()
 		{
-			if (index == 1 && double.TryParse(DisplayString, out operands[1]))
+			/* Method invoked when the "Equals" button is pressed. */
+
+			// If the calculator is in an error state, then don't do anything.
+			if (errorState == ErrorState.None)
 			{
-				switch (selectedOperator)
+				// Variable to store the number currently being displayed.
+				double number;
+
+				// Parse and store the number currently being displayed.
+				if (double.TryParse(DisplayString, out number))
 				{
-					case Operator.Addition:
-						operands[0] = BasicMath.Add(operands[0], operands[1]);
-						break;
-					case Operator.Subtraction:
-						operands[0] = BasicMath.Subtract(operands[0], operands[1]);
-						break;
-					case Operator.Multiplication:
-						operands[0] = BasicMath.Multiply(operands[0], operands[1]);
-						break;
-					case Operator.Division:
-						if (operands[1] == 0)
-							errorState = true;
+					// If the current number is the first number in the current computation (ie. the selected operator is undefined), then store this number in "result".
+					if (selectedOperator == Operator.Undefined)
+					{
+						result = number;
+					}
+					// Otherwise, perform the selected operation and store the result in the "result" member.
+					else
+					{
+						switch (selectedOperator)
+						{
+							case Operator.Addition:
+								result = BasicMath.Add(result, number);
+								break;
+							case Operator.Subtraction:
+								result = BasicMath.Subtract(result, number);
+								break;
+							case Operator.Multiplication:
+								result = BasicMath.Multiply(result, number);
+								break;
+							case Operator.Division:
+								// If dividing by 0, set the calculator to error state
+								if (number == 0)
+									errorState = ErrorState.DivisionByZero;
+								else
+									result = BasicMath.Divide(result, number);
+								break;
+						}
+
+						// Set the display accordingly
+						if (errorState != ErrorState.None)
+						{
+							DisplayString = "Error";
+						}
 						else
-							operands[0] = BasicMath.Divide(operands[0], operands[1]);
-						break;
+						{
+							DisplayString = $"{result}";
+						}
+					}
 				}
-				if (errorState)
-				{
-					DisplayString = "Error";
-				}
-				else
-				{
-					DisplayString = $"{operands[0]}";
-				}
+
+				// Reset the selected operator to "Undefined" and update last button pressed and last dependency button pressed.
+				selectedOperator = Operator.Undefined;
+				lastDepButtonPressed = ButtonType.Equals;
+				lastDepButtonPressed2 = ButtonType.Equals;
 			}
 		}
+
+		#endregion
+
+		#region INotifyPropertyChanged members.
+
+		public event PropertyChangedEventHandler PropertyChanged;
 
 		private void OnPropertyChanged(string propertyName)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+
+		#endregion
 	}
 
+	/// <summary>
+	/// An enum for possible operators.
+	/// </summary>
 	public enum Operator
 	{
 		Undefined,
@@ -229,5 +343,28 @@ namespace CalculatorApp.ViewModel
 		Subtraction,
 		Multiplication,
 		Division
+	}
+
+	/// <summary>
+	/// An enum for button types.
+	/// </summary>
+	public enum ButtonType
+	{
+		AC,
+		Negative,
+		Number,
+		Decimal,
+		Percent,
+		Operator,
+		Equals
+	}
+
+	/// <summary>
+	/// An enum for error states.
+	/// </summary>
+	public enum ErrorState
+	{
+		None,
+		DivisionByZero
 	}
 }

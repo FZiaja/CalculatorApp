@@ -7,6 +7,9 @@ using System.Windows.Input;
 
 namespace CalculatorApp.ViewModel.Commands
 {
+    /// <summary>
+    /// Command class to implement the command for the operator buttons.
+    /// </summary>
     public class OperatorButtonCommand : ICommand
     {
         public CalculatorVM VM { get; set; }

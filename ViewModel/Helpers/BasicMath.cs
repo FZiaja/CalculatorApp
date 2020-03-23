@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace CalculatorApp.ViewModel.Helpers
 {
+    /// <summary>
+    /// A class with static members, for performing basic mathematical operations.
+    /// </summary>
     public class BasicMath
     {
         public static double Add(double n1, double n2)

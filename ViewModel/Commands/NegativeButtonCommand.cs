@@ -7,6 +7,9 @@ using System.Windows.Input;
 
 namespace CalculatorApp.ViewModel.Commands
 {
+    /// <summary>
+    /// Command class to implement the "+/-" button command.
+    /// </summary>
     public class NegativeButtonCommand : ICommand
     {
         public CalculatorVM VM { get; set; }
